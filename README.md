@@ -1,19 +1,37 @@
 # Moot Index
 
-Turn research notes into an issue-by-issue index of authorities and pinpoint references for a moot brief.
+Import team notes once and print an oral argument sheet grouped by issue, with distinct authorities and pinpoint citations.
 
 ## Try it
 
-Install the .NET 10 SDK, open this folder, and run:
+From this folder with the .NET 10 SDK installed:
 
 ```sh
-dotnet run -- example.tsv
+dotnet run -- brief moot.db study.tsv
 ```
 
-Look for `1 supporting, 1 distinguishing` in the output. To use your own data, copy the example and pass the new filename. Use `-` to read from standard input.
+Optional TSV columns: issue, authority, pinpoint, support or distinguish, proposition. Run brief moot.db alone to print the saved sheet. Redirect to a text file to share. One sheet groups each proposition under its issue; print length depends on the case.
 
-## Input
+The included study.tsv uses tab-separated fields. Comment lines start with `#`.
 
-Issue, authority, pinpoint, side (support or distinguish), research note. All example references are fictional classroom materials. Separate columns with actual tabs, omit a header row, and use a period for decimal fractions.
+The database is created on first use. Use a different database filename for another class or team.
 
-Built for law coursework. [ISCED-F field 042](https://uis.unesco.org/sites/default/files/documents/isced-fields-of-education-and-training-2013-en.pdf).
+The original exercise remains available with `dotnet run -- example.tsv`.
+
+## When to use it
+
+A moot team needs to find its authority and pinpoint for each argument while preparing an oral round.
+
+After importing the sample, run `dotnet run -- brief moot.db --sheet Standing oral.html` and print the issue sheet for a practice round.
+
+Example result:
+
+```text
+ORAL ARGUMENT SHEET
+
+Standing — 1 distinct authorities
+  Timely filing  [support] Seminar A, p. 7
+  Written notice  [support] Seminar A, p. 8
+```
+
+Related course or field workflow: [Boston University moot court manual](https://www.bu.edu/law/files/2021/09/Moot-Court-Manual-2021.pdf).

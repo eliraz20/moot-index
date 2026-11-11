@@ -1,9 +1,16 @@
 using System.Globalization;
 
 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+if (args.Length > 0 && args[0] == "brief")
+{
+    try { BriefReport.Run(args); return 0; }
+    catch (Exception e) when (e is FormatException or IOException or ArgumentException or OverflowException or UnauthorizedAccessException or Microsoft.Data.Sqlite.SqliteException)
+    { Console.Error.WriteLine(e.Message); return 1; }
+}
+
 if (args.Length != 1 || args[0] == "--help")
 {
-    Console.WriteLine("Usage: dotnet run -- <input-file|->");
+    Console.WriteLine("Usage: dotnet run -- brief moot.db study.tsv  |  original format: <input-file|->");
     return args.Length == 1 ? 0 : 2;
 }
 
@@ -11,7 +18,7 @@ try
 {
     string[] lines = args[0] == "-" ? Console.In.ReadToEnd().ReplaceLineEndings("\n").TrimEnd('\n').Split('\n') : File.ReadAllLines(args[0]);
     Check(lines.Length >= 1 && lines.Any(line => !string.IsNullOrWhiteSpace(line)), "Input is empty or missing records.");
-    var notes = lines.Select(s => Fields(s, 5)).ToArray();
+    var notes = lines.Select(s => Fields(s, 5)).DistinctBy(f=>(f[0],f[1],f[2],f[3],f[4])).ToArray();
     foreach (var f in notes)
         Check(f[3] is "support" or "distinguish", "Side must be support or distinguish.");
     foreach (var issue in notes.GroupBy(f => f[0]).OrderBy(g => g.Key))
